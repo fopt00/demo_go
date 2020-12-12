@@ -1,3 +1,9 @@
+/*
+ * Copyright(C) 2020 github.com/hidu  All Rights Reserved.
+ * Author: hidu (duv123+git@baidu.com)
+ * Date: 2020/11/7
+ */
+
 package proxy
 
 import (
@@ -11,28 +17,34 @@ import (
 )
 
 type Config struct {
+	// 服务监听地址,如0.0.0.0：8128
 	ListenAddr string
 
+	// 原地址，如 www.baidu.com:80
 	DestAddr string
 
+	// 请求内容dump输出的文件地址
 	RequestDumpPath string
 
 	RequestDumpWriter io.WriteCloser
 
+	// 响应内容dump输出的文件地址
 	ResponseDumpPath string
 
-	ResponseDumpWriter io.WriteCloser
+	ResponseDUmpWriter io.WriteCloser
 
+	// 请求和响应解码 .so 的文件地址
 	DecoderPluginPath string
 
 	NewDecoderFunc NewDecoderFunc
 
 	AuthToken string
 
+	// 鉴权方法
 	Allow func(conn net.Conn) error
 }
 
-func (c Config) Parser() error {
+func (c *Config) Parser() error {
 	if c.ListenAddr == "" {
 		return fmt.Errorf("listen addr is empty")
 	}
@@ -56,15 +68,15 @@ func (c Config) Parser() error {
 	return nil
 }
 
-func (c Config) loadDumpFiles() error {
+func (c *Config) loadDumpFiles() error {
 	{
 		name := c.RequestDumpPath
 		if name == "" {
-
+			// pass 不输出
 		} else if name == "-" {
 			c.RequestDumpWriter = os.Stdout
 		} else {
-			f, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 6444)
+			f, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 			if err != nil {
 				return err
 			}
@@ -75,23 +87,24 @@ func (c Config) loadDumpFiles() error {
 	{
 		name := c.ResponseDumpPath
 		if name == "" {
-
+			// pass  不输出
 		} else if name == c.RequestDumpPath {
-			c.ResponseDumpWriter = c.RequestDumpWriter
+			c.ResponseDUmpWriter = c.RequestDumpWriter
 		} else if name == "-" {
-			c.ResponseDumpWriter = os.Stdout
+			c.ResponseDUmpWriter = os.Stdout
 		} else {
-			f, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 6444)
+			f, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 			if err != nil {
 				return err
 			}
-			c.ResponseDumpWriter = f
+			c.ResponseDUmpWriter = f
 		}
 	}
 	return nil
 }
 
-func (c Config) loadDecoder() error {
+// 从plugin 文件加载 decoder
+func (c *Config) loadDecoder() error {
 	if c.DecoderPluginPath == "" {
 		return nil
 	}
@@ -125,7 +138,6 @@ func (c Config) loadDecoder() error {
 	c.NewDecoderFunc = newDecoder(rv)
 	return nil
 }
-
 
 func NewConfigByFlag() *Config {
 	var config = &Config{}

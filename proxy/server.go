@@ -1,9 +1,16 @@
+/*
+ * Copyright(C) 2020 github.com/hidu  All Rights Reserved.
+ * Author: hidu (duv123+git@baidu.com)
+ * Date: 2020/11/7
+ */
+
 package proxy
 
 import (
 	"io"
 	"log"
 	"net"
+	"time"
 )
 
 type Server struct {
@@ -37,6 +44,8 @@ func (s *Server) handler(inConn net.Conn) {
 		inConn, err = s.OnNewConn(inConn)
 	}
 
+	defer inConn.Close()
+
 	if err != nil {
 		return
 	}
@@ -46,20 +55,20 @@ func (s *Server) handler(inConn net.Conn) {
 	}
 
 	var decoder Decoder
-	if s.NewDecoderFunc != nil {
-		decoder = s.NewDecoderFunc(inConn)
-	} else {
+	if s.NewDecoderFunc == nil {
 		decoder = NewNopDecoderFunc(inConn)
+	} else {
+		decoder = s.NewDecoderFunc(inConn)
 	}
 
-	errchan := make(chan error, 2)
+	errc := make(chan error, 2)
 
 	copy := func(dst io.Writer, src io.Reader) {
 		_, err := io.Copy(dst, src)
-		errchan <- err
+		errc <- err
 	}
 
-	outConn, err := net.DialTimeout("tcp", s.DestAddr, Duration)
+	outConn, err := net.DialTimeout("tcp", s.DestAddr, 3*time.Second)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -82,5 +91,5 @@ func (s *Server) handler(inConn net.Conn) {
 		wIn = io.MultiWriter(inConn, w2)
 	}
 	go copy(wIn, outConn)
-	<-errchan
+	<-errc
 }
