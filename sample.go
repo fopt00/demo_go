@@ -1,6 +1,6 @@
 package main
 
-import "demo_go/proxy"
+import "demo_go/reflect"
 
 func main() {
 	//complex_types.ArrayEntry()
@@ -42,5 +42,8 @@ func main() {
 	//concurrent.CommunicationEntry()
 	//concurrent.SyncOnceEntry()
 	//concurrent.RaceConditionEntry()
-	proxy.EntryOfProxy()
+
+	//proxy.EntryOfProxy()
+
+	reflect.BasicEntry()
 }
