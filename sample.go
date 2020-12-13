@@ -46,5 +46,6 @@ func main() {
 	//proxy.EntryOfProxy()
 
 	//reflect.BasicEntry()
-	reflect.KindOfEntry()
+	//reflect.KindOfEntry()
+	reflect.IteratingStructEntry()
 }
