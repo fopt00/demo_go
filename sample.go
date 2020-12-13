@@ -48,5 +48,6 @@ func main() {
 	//reflect.BasicEntry()
 	//reflect.KindOfEntry()
 	//reflect.IteratingStructEntry()
-	reflect.JsonEntry()
+	//reflect.JsonEntry()
+	reflect.ElemEntry()
 }
