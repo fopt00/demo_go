@@ -20,7 +20,7 @@ func KindOfEntry()  {
 	fmt.Printf("s.Value: %v\n", v)
 	fmt.Println()
 
-	p := Person{Name: "jack", Age: 12}
+	p := KindPerson{Name: "jack", Age: 12}
 	t = reflect.TypeOf(p)
 	fmt.Printf("p.Type.String: %v\n", t.String())
 	fmt.Printf("p.Type: %v\n", t)
@@ -33,7 +33,7 @@ func KindOfEntry()  {
 }
 
 type Second int
-type Person struct {
+type KindPerson struct {
 	Name string
 	Age int
 }

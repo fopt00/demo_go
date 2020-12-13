@@ -6,44 +6,44 @@ import (
 	"reflect"
 )
 
-type JsonPerson struct {
+type Person struct {
 	Name    string
 	age     int32
-	friends []*JsonPerson
+	friends []*Person
 }
 
 func JsonEntry() {
-	zoro := JsonPerson{
+	zoro := Person{
 		Name: "zoro",
 		age:  10,
 	}
-
-	luffy := JsonPerson{
+	luffy := Person{
 		Name: "luffy",
-		age:  20,
-		friends: []*JsonPerson{
+		age:  18,
+		friends: []*Person{
 			&zoro,
 		},
 	}
-
-	allen := JsonPerson{
+	allen := Person{
 		Name: "allen",
 		age:  19,
-		friends: []*JsonPerson{
-			&zoro,
+		friends: []*Person{
 			&luffy,
+			&zoro,
 		},
 	}
 
-	persons := map[string]JsonPerson{
-		"zoro":  zoro,
-		"luffy": luffy,
+	// 我们的目标是将这个 map 序列化成 json 串
+	persons := map[string]Person{
 		"allen": allen,
+		"luffy": luffy,
+		"zoro":  zoro,
 	}
 
+	// Parse 就是我们要编写的函数
 	buf, err := Parse(persons)
 	if err != nil {
-		fmt.Println("%v\n", err)
+		fmt.Printf("%v\n", err)
 		return
 	}
 	fmt.Printf("%v\n", string(buf))
@@ -57,7 +57,9 @@ func Parse(v interface{}) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// parse 是一个内置的递归函数
 func parse(buf *bytes.Buffer, v reflect.Value) error {
+	// 取到变量的类型的类别
 	switch v.Kind() {
 	case reflect.Invalid:
 		buf.WriteString("null")
@@ -66,8 +68,9 @@ func parse(buf *bytes.Buffer, v reflect.Value) error {
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		fmt.Fprintf(buf, "%d", v.Uint())
 	case reflect.String:
-		fmt.Fprintf(buf, "%s", v.String())
+		fmt.Fprintf(buf, `"%s"`, v.String())
 	case reflect.Ptr:
+		// 如果是指针，则解引用后继续解析
 		return parse(buf, v.Elem())
 	case reflect.Slice, reflect.Array:
 		buf.WriteByte('[')
@@ -86,7 +89,9 @@ func parse(buf *bytes.Buffer, v reflect.Value) error {
 			if i > 0 {
 				buf.WriteString(", ")
 			}
-			fmt.Fprintf(buf, `"%s:"`, v.Type().Field(i).Name)
+			// key 为结构体字段名称
+			fmt.Fprintf(buf, `"%s":`, v.Type().Field(i).Name)
+			// value 需要递归解析，因为 value 也需要序列化成 json 串
 			if err := parse(buf, v.Field(i)); err != nil {
 				return err
 			}
@@ -98,7 +103,7 @@ func parse(buf *bytes.Buffer, v reflect.Value) error {
 			if i > 0 {
 				buf.WriteString(", ")
 			}
-			fmt.Fprintf(buf, "%s", key)
+			fmt.Fprintf(buf, `"%s":`, key)
 			if err := parse(buf, v.MapIndex(key)); err != nil {
 				return err
 			}
@@ -107,6 +112,5 @@ func parse(buf *bytes.Buffer, v reflect.Value) error {
 	default:
 		return fmt.Errorf("unsupported type: %s", v.Type())
 	}
-
 	return nil
 }
