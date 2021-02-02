@@ -1,6 +1,6 @@
 package main
 
-import "demo_go/reflect"
+import "demo_go/goroutine"
 
 func main() {
 	//complex_types.ArrayEntry()
@@ -28,7 +28,7 @@ func main() {
 	//interfaces.ErrorEntry()
 	//interfaces.TypeSwitchEntry()
 
-	//goroutine.RoutineEntry()
+	goroutine.RoutineEntry()
 	//goroutine.ChanEntry()
 	//goroutine.PipelineEntry()
 	//goroutine.OneDirectionChanEntry()
@@ -49,5 +49,5 @@ func main() {
 	//reflect.KindOfEntry()
 	//reflect.IteratingStructEntry()
 	//reflect.JsonEntry()
-	reflect.ElemEntry()
+	//reflect.ElemEntry()
 }
