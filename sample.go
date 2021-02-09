@@ -1,6 +1,6 @@
 package main
 
-import "demo_go/goroutine"
+import "demo_go/tour"
 
 func main() {
 	//complex_types.ArrayEntry()
@@ -28,7 +28,7 @@ func main() {
 	//interfaces.ErrorEntry()
 	//interfaces.TypeSwitchEntry()
 
-	goroutine.RoutineEntry()
+	//goroutine.RoutineEntry()
 	//goroutine.ChanEntry()
 	//goroutine.PipelineEntry()
 	//goroutine.OneDirectionChanEntry()
@@ -50,4 +50,32 @@ func main() {
 	//reflect.IteratingStructEntry()
 	//reflect.JsonEntry()
 	//reflect.ElemEntry()
+
+	/*fmt.Println(tour.Add(1.0, 2.0))
+	x, y := tour.Swap(1, 2)
+	fmt.Println(x, y)
+	a, b := tour.Split(100)
+	fmt.Println(a, b)*/
+
+	//tour.Tester4()
+	//tour.ConvertTester()
+	/*pi := tour.Pi
+	fmt.Println(pi)*/
+
+	/*big := tour.NeedFloat(tour.Big)
+	smallFloat := tour.NeedFloat(tour.Small)
+	smallInt := tour.NeedInt(tour.Small)
+	fmt.Println(big, smallFloat, smallInt)*/
+
+	/*text := "hello good good up"
+	count := tour.WordCount(text)
+	for k, v := range count {
+		fmt.Printf("%v = %v\n", k, v)
+	}*/
+
+	/*var a = 11
+	tour.DoubleValue(&a)
+	fmt.Println(a)*/
+
+	tour.Entry()
 }
