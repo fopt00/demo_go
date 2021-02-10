@@ -77,5 +77,6 @@ func main() {
 	tour.DoubleValue(&a)
 	fmt.Println(a)*/
 
-	tour.Entry()
+	//tour.Entry()
+	tour.TestLoop()
 }
